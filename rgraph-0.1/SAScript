@@ -1,0 +1,5 @@
+rm modules.dat
+for a in `cat time.txt`
+do
+/opt/local/bin/netcarto $a football.dat
+done

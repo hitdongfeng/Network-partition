@@ -1,0 +1,151 @@
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+RGraph README
+
+$LastChangedDate: 2008-12-06 19:04:59 -0500$
+
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+
+This package includes the RGraph libraries, the C libraries for
+complex network analysis developed by Roger Guimera. Some executables,
+build from the libraries, are also included.
+
+Most of the code (say 99.9%) is the original code of Roger Guimera. Only parts of the files related to community detection have been adapted by Renaud Lambiotte 
+
+For the libraries to compile, you will NEED TO INSTALL, first, the
+PRNG library for pseudo-random number generation, available from
+http://statmath.wu-wien.ac.at/prng/.
+
+In a Unix-like system, you can install the RGraph libraries and the
+executables by uncompressing the tarball (tar -xzvf
+rgraph-version.tar.gz) and running the usual stuff from the
+rgraph-version directory:
+
+cd rgraph-version
+
+./configure
+
+./make
+
+./make install
+
+(In a Windows system, you will first need to install some sort of
+"Unix emulation." I have successfully compiled the libraries using
+either Cygwin or MinGW.)
+
+This will install the libraries in your_default_lib_directory/rgraph
+and the executables in your_default_bin_directory. To install in a
+different directory run
+
+./configure --prefix=path_to_install_direcotory
+
+instead of just "./configure". For other configure options run:
+
+./configure -h
+
+
+You can uninstall the whole thing by running
+
+./make uninstall
+
+from the installation directory.
+
+You can also test that everything is working by running
+
+./make check
+
+from the installation directory.
+
+
+----------------------------------------------------------------------
+librgraph
+----------------------------------------------------------------------
+
+librgraph is the library itself. You can use it to build your own
+network analysis programs. Sorry, as of now no documentation is
+available, but you may want to take a look at the header files and try
+to figure things out.
+
+
+----------------------------------------------------------------------
+netcarto
+----------------------------------------------------------------------
+
+Given a network, the program identifies modules---i.e. densely connected groups of nodes in the network---by optimizing the quantity Rt defined in Ref[1]. To do so, the simulated algorithm presented in [2] in order to optimise modularity is generalized.
+
+In case you use the results of the program in a publication, please
+cite the following papers:
+
+1. Lambiotte, R., Delvenne, J.-C. & Barahona, M., arXiv:0812.1770 
+
+2. Guimera, R. & Amaral, L.A.N., Functional cartography of complex
+   metabolic networks, Nature 433, 895-900 (2005).
+
+
+
+
+Input parameters
+----------------------------------------------------------------------
+
+To run the program in a Linux environment (or using a terminal on a Mac), type 
+/usr/local/bin/netcarto 0.5 file.txt
+
+In that case, the resolution parameter (t) is set to 0.5
+file.txt is the name of the network file that contains the network. The file must be a list of links with the format:
+
+  n1 n2
+  n3 n4
+  .  .
+  .  .
+  .  .
+
+  This represents a network with a link between nodes n1 and n2,
+  another between nodes n3 and n4, and so on. Nodes must be separated
+  by spaces.
+
+The parameters of the method have been fixed by default to
+
+Iteration factor (f)=1.0
+Role of f: At each temperature of the simulated annealing
+  (SA), the program performs fN^2 individual-node updates (involving
+  the movement of a single node from one module to another) and fN
+  collective updates (involving the merging of two modules and the
+  split of a module). The number "f" is the iteration factor. Large
+  values of f (1 or larger) will result, in general, in better results
+  (higher modularities) and longer execution times. The recommended
+  range for f is [0.1, 1], although smaller values may be needed for
+  large and/or dense networks. Note, also, that a minimum number of
+  iterations is imposed at each temperature, so that when f is very
+  small, the minimum number will be used instead of fN^2 or fN.
+
+Cooling factor (c)=0.995 
+Role of c: After the desired number of updates is done at a
+  certain temperature T, the system is cooled down to a new
+  temperature T'=cT, where c is the cooling factor. the cooling factor
+  must be strictly larger than 0 and strictly smaller than 1. In
+  general, values close to one will result in better results and
+  longer execution times. Recommended values of the cooling factor f
+  are [0.990, 0.999], although smaller values (0.95 or even 0.9) may
+  be needed for large and/or dense networks.
+If you want to change these default values, do it in main_netcarto.c and recompile.
+
+Program output
+----------------------------------------------------------------------
+
+After entering these parameters, the algorithm identifies
+the modules in the network. As an output, the following line is printed on the screen:
+t N MaxQt Nc seconds
+where t is the resolution parameter, N the number of nodes, MaxQt the optimal value of Qt found by the algorithm, Nc the number of communities in the optimal partition and seconds the number of seconds taken to find it. 
+
+Information about the optimal partition found by the algorithm is appended to the file modules.dat, in the following format:
+node0 community_of_node0
+node1 community_of_node1
+node2 community_of_node2
+etc.
+
+----------------------------------------------------------------------
+CONTACT
+----------------------------------------------------------------------
+
+r.lambiotte@imperial.ac.uk
